@@ -100,6 +100,17 @@ let handleUserPublished = async (user, mediaType) => {
 let handleUserLeft = async (user) => {
   delete remoteUsers[user.uid];
   document.getElementById(`user-container-${user.uid}`).remove();
+
+  if (userIdInDisplayFrame === `user-container-${user.uid}`) {
+    displayFrame.style.display = null;
+  }
+
+  let vidFrames = document.getElementById("video__container");
+
+  for (let i = 0; vidFrames.length > i; i++) {
+    vidFrames[i].style.height = "300px";
+    vidFrames[i].style.width = "300px";
+  }
 };
 
 joinRoom();

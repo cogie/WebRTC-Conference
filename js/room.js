@@ -46,7 +46,7 @@ let expandVideoFrame = (e) => {
   displayFrame.appendChild(e.currentTarget);
   userIdInDisplayFrame = e.currentTarget.id;
 
-  for (i = 0; vidFrames.length; i++) {
+  for (let i = 0; vidFrames.length > i; i++) {
     if (vidFrames[i].id != userIdInDisplayFrame) {
       vidFrames[i].style.height = "100px";
       vidFrames[i].style.width = "100px";
@@ -54,6 +54,23 @@ let expandVideoFrame = (e) => {
   }
 };
 
-for (i = 0; vidFrames.length; i++) {
+for (let i = 0; vidFrames.length > i; i++) {
   vidFrames[i].addEventListener("click", expandVideoFrame);
 }
+
+//hide display of the mainframe user
+let hideDisplayFrame = () => {
+  userIdInDisplayFrame = null;
+  displayFrame.style.display = null;
+
+  let child = displayFrame.children[0];
+  document.getElementById("streams__container");
+
+  //resize
+  for (let i = 0; vidFrames.length > i; i++) {
+    vidFrames[i].style.height = "300px";
+    vidFrames[i].style.width = "300px";
+  }
+};
+
+displayFrame.addEventListener('click', hideDisplayFrame);
