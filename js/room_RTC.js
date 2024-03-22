@@ -34,8 +34,9 @@ let joinRoom = async () => {
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
   await client.join(APP_ID, roomId, token, uid);
 
-  //call when users publish
+  //call when users publish && left
   client.on("user-published", handleUserPublished);
+  client.on("user-left", handleUserLeft);
 
   joinStream();
 };
@@ -82,6 +83,12 @@ let handleUserPublished = async (user, mediaType) => {
   if (mediaType === "audio") {
     user.audioTrack.play(`user-${user.uid}`);
   }
+};
+
+//deletes the frame of user if it leaves the call
+let handleUserLeft = async (user) => {
+  delete remoteUsers[user.uid];
+  document.getElementById(`user-container-${user.uid}`).remove();
 };
 
 joinRoom();
