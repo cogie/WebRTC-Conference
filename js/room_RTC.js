@@ -116,4 +116,34 @@ let handleUserLeft = async (user) => {
   }
 };
 
+//toggling mic
+let toggleMic = async (e) => {
+  let button = e.currentTarget;
+
+  if (localTracks[0].muted) {
+    await localTracks[0].setMuted(false);
+    button.classList.add('active');
+  } else {
+    await localTracks[0].setMuted(true);
+    button.classList.remove('active');
+  }
+}
+
+//toggling camera
+let toggleCamera = async (e) => {
+  let button = e.currentTarget;
+
+  if (localTracks[1].muted) {
+    await localTracks[1].setMuted(false);
+    button.classList.add('active')
+  } else {
+    await localTracks[1].setMuted(true);
+    button.classList.remove('active')
+  }
+}
+
+
+document.getElementById('mic-btn').addEventListener('click', toggleMic);
+document.getElementById('camera-btn').addEventListener('click', toggleCamera);
+
 joinRoom();

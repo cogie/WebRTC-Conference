@@ -64,7 +64,7 @@ let hideDisplayFrame = () => {
   displayFrame.style.display = null;
 
   let child = displayFrame.children[0];
-  document.getElementById("streams__container");
+  document.getElementById("streams__container").appendChild(child);
 
   //resize
   for (let i = 0; vidFrames.length > i; i++) {
