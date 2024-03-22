@@ -42,7 +42,10 @@ let joinRoom = async () => {
 };
 
 let joinStream = async () => {
-  localTracks = await AgoraRTC.createMicrophoneAndCameraTracks(); //ask for media devices
+  localTracks = await AgoraRTC.createMicrophoneAndCameraTracks({}, {encoderConfig:{
+    width:{min:640, ideal:1920, max:1920},
+    height:{min:480, ideal:1080, max:1080}
+  }}); //ask for media devices and set the resolution
 
   //create the container where players show
   let player = `<div class="video__container" id="user-container-${uid}">
@@ -92,7 +95,7 @@ let handleUserPublished = async (user, mediaType) => {
   }
 
   if (mediaType === "audio") {
-    user.audioTrack.play(`user-${user.uid}`);
+    user.audioTrack.play();
   }
 };
 
