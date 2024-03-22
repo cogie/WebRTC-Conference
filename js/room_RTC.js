@@ -34,6 +34,9 @@ let joinRoom = async () => {
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
   await client.join(APP_ID, roomId, token, uid);
 
+  //call when users publish
+  client.on("user-published", handleUserPublished);
+
   joinStream();
 };
 
@@ -49,7 +52,36 @@ let joinStream = async () => {
     .getElementById("streams__container")
     .insertAdjacentHTML("beforeend", player);
 
-  localTracks[1].play(`user-${uid}`);
+  localTracks[1].play(`user-${uid}`); //plays the video since arr[0] = audio && arr[1] = video
+  await client.publish([localTracks[0], localTracks[1]]); //both audio and video published
+};
+
+//publishing the stream
+let handleUserPublished = async (user, mediaType) => {
+  remoteUsers[user.uid] = user;
+
+  await client.subscribe(user, mediaType); // subscribe to user track
+
+  let player = document.getElementById(`user-container-${user.uid}`);
+
+  //check for duplicates users
+  if (player === null) {
+    player = `<div class="video__container" id="user-container-${user.uid}">
+                        <div class="video-player" id="user-${user.uid}"></div>
+                    </div>`;
+
+    document
+      .getElementById("streams__container")
+      .insertAdjacentHTML("beforeend", player);
+  }
+
+  if (mediaType === "video") {
+    user.videoTrack.play(`user-${user.uid}`);
+  }
+
+  if (mediaType === "audio") {
+    user.audioTrack.play(`user-${user.uid}`);
+  }
 };
 
 joinRoom();
