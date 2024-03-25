@@ -30,7 +30,7 @@ let remoteUsers = {};
 
 //for screenshare
 let localScreenTracks;
-let sharingScreen =  false;
+let sharingScreen = false;
 
 //user joining and displaying the screen
 let joinRoom = async () => {
@@ -43,28 +43,6 @@ let joinRoom = async () => {
   client.on("user-left", handleUserLeft);
 
   joinStream();
-};
-
-let joinStream = async () => {
-  localTracks = await AgoraRTC.createMicrophoneAndCameraTracks({}, {encoderConfig:{
-    width:{min:640, ideal:1920, max:1920},
-    height:{min:480, ideal:1080, max:1080}
-  }}); //ask for media devices and set the resolution
-
-  //create the container where players show
-  let player = `<div class="video__container" id="user-container-${uid}">
-                        <div class="video-player" id="user-${uid}"></div>
-                    </div>`;
-
-  document  
-    .getElementById("streams__container")
-    .insertAdjacentHTML("beforeend", player); // add item to the DOM
-  document
-    .getElementById(`user-container-${uid}`)
-    .addEventListener("click", expandVideoFrame);
-
-  localTracks[1].play(`user-${uid}`); //plays the video since arr[0] = audio && arr[1] = video
-  await client.publish([localTracks[0], localTracks[1]]); //both audio and video published
 };
 
 //publishing the stream
@@ -104,22 +82,22 @@ let handleUserPublished = async (user, mediaType) => {
   }
 };
 
-//switch camera after closing sreen share 
+//switch camera after closing sreen share
 let switchToCamera = async () => {
-    let player = `<div class="video__container" id="user-container-${uid}">
+  let player = `<div class="video__container" id="user-container-${uid}">
                     <div class="video-player" id="user-${uid}"></div>
-                 </div>`
-    displayFrame.insertAdjacentHTML('beforeend', player)
+                 </div>`;
+  displayFrame.insertAdjacentHTML("beforeend", player);
 
-    await localTracks[0].setMuted(true)
-    await localTracks[1].setMuted(true)
+  await localTracks[0].setMuted(true);
+  await localTracks[1].setMuted(true);
 
-    document.getElementById('mic-btn').classList.remove('active')
-    document.getElementById('screen-btn').classList.remove('active')
+  document.getElementById("mic-btn").classList.remove("active");
+  document.getElementById("screen-btn").classList.remove("active");
 
-    localTracks[1].play(`user-${uid}`)
-    await client.publish([localTracks[1]])
-}
+  localTracks[1].play(`user-${uid}`);
+  await client.publish([localTracks[1]]);
+};
 
 //deletes the frame of user if it leaves the call
 let handleUserLeft = async (user) => {
@@ -144,14 +122,14 @@ let toggleMic = async (e) => {
 
   if (localTracks[0].muted) {
     await localTracks[0].setMuted(false);
-    button.classList.add('active');
-    console.log('Microphone on')
+    button.classList.add("active");
+    console.log("Microphone on");
   } else {
     await localTracks[0].setMuted(true);
-    button.classList.remove('active');
-    console.log('Microphone off');
+    button.classList.remove("active");
+    console.log("Microphone off");
   }
-}
+};
 
 //toggling camera
 let toggleCamera = async (e) => {
@@ -159,67 +137,69 @@ let toggleCamera = async (e) => {
 
   if (localTracks[1].muted) {
     await localTracks[1].setMuted(false);
-    button.classList.add('active')
-    console.log('Camera on')
+    button.classList.add("active");
+    console.log("Camera on");
   } else {
     await localTracks[1].setMuted(true);
-    button.classList.remove('active')
-    console.log('Camera off')
+    button.classList.remove("active");
+    console.log("Camera off");
   }
-}
+};
 
 //screen sharing functionality
 let toggleScreen = async (e) => {
-  let screenButton = e.currentTarget
-    let cameraButton = document.getElementById('camera-btn')
+  let screenButton = e.currentTarget;
+  let cameraButton = document.getElementById("camera-btn");
 
-    if(!sharingScreen){
-        sharingScreen = true
+  if (!sharingScreen) {
+    sharingScreen = true;
 
-        screenButton.classList.add('active')
-        cameraButton.classList.remove('active')
-        cameraButton.style.display = 'none'
+    screenButton.classList.add("active");
+    cameraButton.classList.remove("active");
+    cameraButton.style.display = "none";
 
-        localScreenTracks = await AgoraRTC.createScreenVideoTrack()
+    localScreenTracks = await AgoraRTC.createScreenVideoTrack();
 
-        document.getElementById(`user-container-${uid}`).remove()
-        displayFrame.style.display = 'block'
+    document.getElementById(`user-container-${uid}`).remove(); //remove the current video track
+    displayFrame.style.display = "block";
 
-        let player = `<div class="video__container" id="user-container-${uid}">
+    let player = `<div class="video__container" id="user-container-${uid}">
                 <div class="video-player" id="user-${uid}"></div>
-            </div>`
+            </div>`;
 
-        displayFrame.insertAdjacentHTML('beforeend', player)
-        document.getElementById(`user-container-${uid}`).addEventListener('click', expandVideoFrame)
+    displayFrame.insertAdjacentHTML("beforeend", player);
+    document
+      .getElementById(`user-container-${uid}`)
+      .addEventListener("click", expandVideoFrame);
 
-        userIdInDisplayFrame = `user-container-${uid}`
-        localScreenTracks.play(`user-${uid}`)
+    userIdInDisplayFrame = `user-container-${uid}`;
+    localScreenTracks.play(`user-${uid}`);
 
-        await client.unpublish([localTracks[1]])
-        await client.publish([localScreenTracks])
+    await client.unpublish([localTracks[1]]);
+    await client.publish([localScreenTracks]);
 
-        let videoFrames = document.getElementsByClassName('video__container')
-        for(let i = 0; videoFrames.length > i; i++){
-            if(videoFrames[i].id != userIdInDisplayFrame){
-              videoFrames[i].style.height = '100px'
-              videoFrames[i].style.width = '100px'
-            }
-          }
-
-
-    }else{
-        sharingScreen = false 
-        cameraButton.style.display = 'block'
-        document.getElementById(`user-container-${uid}`).remove()
-        await client.unpublish([localScreenTracks])
-
-        switchToCamera()
+    let videoFrames = document.getElementsByClassName("video__container");
+    for (let i = 0; videoFrames.length > i; i++) {
+      if (videoFrames[i].id != userIdInDisplayFrame) {
+        videoFrames[i].style.height = "100px";
+        videoFrames[i].style.width = "100px";
+      }
     }
-}
+  } else {
+    sharingScreen = false;
+    cameraButton.style.display = "block";
+    document.getElementById(`user-container-${uid}`).remove();
+    await client.unpublish([localScreenTracks]);
 
+    switchToCamera();
+  }
+};
 
-document.getElementById('mic-btn').addEventListener('click', toggleMic);
-document.getElementById('camera-btn').addEventListener('click', toggleCamera);
-document.getElementById('screen-btn').addEventListener('click', toggleScreen);
+//leave functionality
+let leaveStream = async (e) => {};
+
+document.getElementById("mic-btn").addEventListener("click", toggleMic);
+document.getElementById("camera-btn").addEventListener("click", toggleCamera);
+document.getElementById("screen-btn").addEventListener("click", toggleScreen);
 
 joinRoom();
