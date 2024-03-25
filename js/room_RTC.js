@@ -13,6 +13,9 @@ let token = null;
 
 let client; //store information about the users like media dev info's
 
+let rtmClient;
+let channel;
+
 //create custom rooms
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -22,6 +25,13 @@ let roomId = urlParams.get("room");
 //if there is no room id should direct to lobby or main
 if (!roomId) {
   roomId = "main";
+}
+
+let displayName = sessionStorage.getItem("display_name");
+
+//check for username
+if (!displayName) {
+  window.location = "lobby.html";
 }
 
 //actual video/audio stream and store them in a variable remoteUsers
@@ -34,7 +44,15 @@ let sharingScreen = false;
 
 //user joining and displaying the screen
 let joinRoom = async () => {
-  //set up the client using agora SDk
+  //set up the client using agora SDK RTM =  real time meassaging
+  rtmClient = AgoraRTM.createInstance(APP_ID);
+  await rtmClient.login({ uid, token });
+
+  //create the channle
+  channel = await rtmClient.createChannel(roomId);
+  await channel.join();
+
+  //set up the client using agora SDk RTC = real time communication
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
   await client.join(APP_ID, roomId, token, uid);
 
