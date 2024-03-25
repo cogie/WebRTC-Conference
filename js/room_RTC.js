@@ -52,7 +52,7 @@ let joinStream = async () => {
                         <div class="video-player" id="user-${uid}"></div>
                     </div>`;
 
-  document
+  document  
     .getElementById("streams__container")
     .insertAdjacentHTML("beforeend", player); // add item to the DOM
   document
@@ -87,8 +87,9 @@ let handleUserPublished = async (user, mediaType) => {
 
   //checks
   if (displayFrame.style.display) {
-    player.style.height = "100px";
-    player.style.width = "100px";
+    let videoFrame = document.getElementById(`user-container-${user.uid}`);
+    videoFrame.style.height = "100px";
+    videoFrame.style.width = "100px";
   }
   if (mediaType === "video") {
     user.videoTrack.play(`user-${user.uid}`);
