@@ -45,6 +45,33 @@ let joinRoom = async () => {
   joinStream();
 };
 
+let joinStream = async () => {
+  localTracks = await AgoraRTC.createMicrophoneAndCameraTracks(
+    {},
+    {
+      encoderConfig: {
+        width: { min: 640, ideal: 1920, max: 1920 },
+        height: { min: 480, ideal: 1080, max: 1080 },
+      },
+    }
+  ); //ask for media devices and set the resolution
+
+  //create the container where players show
+  let player = `<div class="video__container" id="user-container-${uid}">
+                        <div class="video-player" id="user-${uid}"></div>
+                    </div>`;
+
+  document
+    .getElementById("streams__container")
+    .insertAdjacentHTML("beforeend", player); // add item to the DOM
+  document
+    .getElementById(`user-container-${uid}`)
+    .addEventListener("click", expandVideoFrame);
+
+  localTracks[1].play(`user-${uid}`); //plays the video since arr[0] = audio && arr[1] = video
+  await client.publish([localTracks[0], localTracks[1]]); //both audio and video published
+};
+
 //publishing the stream
 let handleUserPublished = async (user, mediaType) => {
   remoteUsers[user.uid] = user;
