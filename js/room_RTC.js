@@ -55,6 +55,9 @@ let joinRoom = async () => {
   channel.on("MemberJoined", handleMemberJoined);
   channel.on("MemberLeft", handleMemberLeft);
 
+  //call from RTM to display users ID to DOM realtime
+  getMembers();
+
   //set up the client using agora SDk RTC = real time communication
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
   await client.join(APP_ID, roomId, token, uid);

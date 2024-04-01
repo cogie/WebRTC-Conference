@@ -24,6 +24,15 @@ let removeMemberFromDOM = async (MemberId) => {
   memberWrapper.remove();
 };
 
+//get all member ID and display to DOM realtime
+let getMembers = async () => {
+  let members = await channel.getMembers();
+
+  for (let i = 0; members.length > i; i++) {
+    addMemberToDom(members[i]);
+  }
+};
+
 //when users leave channle will trigger
 let leaveChannel = async () => {
   await channel.leave();
