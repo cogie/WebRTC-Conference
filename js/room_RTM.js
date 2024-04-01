@@ -1,6 +1,9 @@
 let handleMemberJoined = async (MemberId) => {
   console.log("New member has joined the room:", MemberId);
   addMemberToDom(MemberId);
+
+  let members = await channel.getMembers();
+  updateMemberTotal(members);
 };
 
 //shows the memberId to participant section later will then change to name of users
@@ -16,8 +19,16 @@ let addMemberToDom = async (MemberId) => {
   membersWrap.insertAdjacentHTML("beforeend", memberItem);
 };
 
+let updateMemberTotal = async (members) => {
+  let total = document.getElementById("members__count");
+  total.innerText = members.length;
+};
+
 let handleMemberLeft = async (MemberId) => {
   removeMemberFromDOM(MemberId);
+
+  let members = await channel.getMembers();
+  updateMemberTotal(members);
 };
 
 let removeMemberFromDOM = async (MemberId) => {
@@ -29,7 +40,7 @@ let removeMemberFromDOM = async (MemberId) => {
 //get all member ID and display to DOM realtime
 let getMembers = async () => {
   let members = await channel.getMembers();
-
+  updateMemberTotal(members);
   for (let i = 0; members.length > i; i++) {
     addMemberToDom(members[i]);
   }
