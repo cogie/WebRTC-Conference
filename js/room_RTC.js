@@ -48,6 +48,9 @@ let joinRoom = async () => {
   rtmClient = await AgoraRTM.createInstance(APP_ID);
   await rtmClient.login({ uid, token });
 
+  //gets the name of users that will be display in DOM instead of id
+  await rtmClient.addOrUpdateLocalUserAttributes({ name: displayName });
+
   // // //create the channle
   channel = await rtmClient.createChannel(roomId);
   await channel.join();
