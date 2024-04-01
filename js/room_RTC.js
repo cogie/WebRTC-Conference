@@ -53,6 +53,7 @@ let joinRoom = async () => {
   await channel.join();
 
   channel.on("MemberJoined", handleMemberJoined);
+  channel.on("MemberLeft", handleMemberLeft);
 
   //set up the client using agora SDk RTC = real time communication
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
