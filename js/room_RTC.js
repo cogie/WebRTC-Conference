@@ -44,13 +44,15 @@ let sharingScreen = false;
 
 //user joining and displaying the screen
 let joinRoom = async () => {
-  //set up the client using agora SDK RTM =  real time meassaging
-  rtmClient = AgoraRTM.createInstance(APP_ID);
+  // //set up the client using agora SDK RTM =  real time meassaging
+  rtmClient = await AgoraRTM.createInstance(APP_ID);
   await rtmClient.login({ uid, token });
 
-  //create the channle
+  // // //create the channle
   channel = await rtmClient.createChannel(roomId);
   await channel.join();
+
+  channel.on("MemberJoined", handleMemberJoined);
 
   //set up the client using agora SDk RTC = real time communication
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
