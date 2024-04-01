@@ -73,4 +73,4 @@ let hideDisplayFrame = () => {
   }
 };
 
-displayFrame.addEventListener('click', hideDisplayFrame);
+displayFrame.addEventListener("click", hideDisplayFrame);
