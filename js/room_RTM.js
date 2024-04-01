@@ -53,6 +53,11 @@ let handleChannelMessage = async (MessageData, MemberId) => {
   //parse the data since it was strigyfied
   let data = JSON.parse(MessageData.text);
   console.log("Message:", data);
+
+  //check and show message to the channel multi users
+  if (data.type === "chat") {
+    addMessageToDOM(data.displayName, data.message);
+  }
 };
 
 //trigger when sending messages
@@ -65,10 +70,33 @@ let sendMessage = async (e) => {
     text: JSON.stringify({
       type: "chat",
       message: message,
-      displaName: displayName,
+      displayName: displayName,
     }),
   });
+  addMessageToDOM(displayName, message);
   e.target.reset();
+};
+
+//show message to DOM
+let addMessageToDOM = async (name, message) => {
+  let messageWrapper = document.getElementById("messages");
+
+  let newMessage = `<div class="message__wrapper">
+                        <div class="message__body">
+                            <strong class="message__author">${name}</strong>
+                            <p class="message__text">${message}</p>
+                        </div>
+                    </div>`;
+
+  messageWrapper.insertAdjacentHTML("beforeend", newMessage);
+
+  let lastMessage = document.querySelector(
+    "#messages .message__wrapper:last-child"
+  );
+  //check
+  if (lastMessage) {
+    lastMessage.scrollIntoView();
+  }
 };
 
 //when users leave channle will trigger
