@@ -46,10 +46,38 @@ let getMembers = async () => {
   }
 };
 
+//handles the message from the channel = diff users
+let handleChannelMessage = async (MessageData, MemberId) => {
+  console.log("New message recieved!");
+
+  //parse the data since it was strigyfied
+  let data = JSON.parse(MessageData.text);
+  console.log("Message:", data);
+};
+
+//trigger when sending messages
+let sendMessage = async (e) => {
+  e.preventDefault();
+
+  //get the message from the form
+  let message = e.target.message.value;
+  channel.sendMessage({
+    text: JSON.stringify({
+      type: "chat",
+      message: message,
+      displaName: displayName,
+    }),
+  });
+  e.target.reset();
+};
+
 //when users leave channle will trigger
 let leaveChannel = async () => {
   await channel.leave();
   await rtmClient.logout();
 };
 
+let msgForm = document.getElementById("message__form");
+
 window.addEventListener("beforeunload", leaveChannel);
+msgForm.addEventListener("submit", sendMessage);

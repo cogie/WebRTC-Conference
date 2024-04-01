@@ -57,6 +57,7 @@ let joinRoom = async () => {
 
   channel.on("MemberJoined", handleMemberJoined);
   channel.on("MemberLeft", handleMemberLeft);
+  channel.on("ChannelMessage", handleChannelMessage);
 
   //call from RTM to display users ID to DOM realtime
   getMembers();
