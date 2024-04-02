@@ -280,6 +280,10 @@ let leaveStream = async (e) => {
       vidFrames[i].style.width = "300px";
     }
   }
+
+  channel.sendMessage({
+    text: JSON.stringify({ type: "user_left", uid: uid }),
+  });
 };
 
 document.getElementById("mic-btn").addEventListener("click", toggleMic);
