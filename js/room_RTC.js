@@ -75,6 +75,7 @@ let joinRoom = async () => {
 let joinStream = async () => {
   document.getElementById("join-btn").style.display = "none";
   document.getElementsByClassName("stream__actions")[0].style.display = "flex";
+
   localTracks = await AgoraRTC.createMicrophoneAndCameraTracks(
     {},
     {
@@ -252,11 +253,39 @@ let toggleScreen = async (e) => {
 };
 
 //leave functionality
-let leaveStream = async (e) => {};
+let leaveStream = async (e) => {
+  e.preventDefault();
+  document.getElementById("join-btn").style.display = "block";
+  document.getElementsByClassName("stream__actions")[0].style.display = "none";
+
+  for (let i = 0; localTracks.length > i; i++) {
+    localTracks[i].stop();
+    localTracks[i].close();
+  }
+
+  await client.unpublish([localTracks[0], localTracks[1]]);
+
+  if (localScreenTracks) {
+    await client.unpublish([localScreenTracks]);
+  }
+
+  document.getElementById(`user-container-${uid}`).remove();
+
+  if (userIdInDisplayFrame === `user-container-${uid}`) {
+    displayFrame.style.display = null;
+
+    //loop through vidFrames
+    for (let i = 0; vidFrames.length > i; i++) {
+      vidFrames[i].style.height = "300px";
+      vidFrames[i].style.width = "300px";
+    }
+  }
+};
 
 document.getElementById("mic-btn").addEventListener("click", toggleMic);
 document.getElementById("camera-btn").addEventListener("click", toggleCamera);
 document.getElementById("screen-btn").addEventListener("click", toggleScreen);
 document.getElementById("join-btn").addEventListener("click", joinStream);
+document.getElementById("leave-btn").addEventListener("click", leaveStream);
 
 joinRoom();
