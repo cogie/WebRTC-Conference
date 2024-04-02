@@ -4,6 +4,9 @@ let handleMemberJoined = async (MemberId) => {
 
   let members = await channel.getMembers();
   updateMemberTotal(members);
+
+  let { name } = await rtmClient.getUserAttributesByKeys(MemberId, ["name"]);
+  addBotMessageToDOM(`Welcome Aboard ${name}! 👋`);
 };
 
 //shows the memberId to participant section later will then change to name of users
@@ -34,6 +37,8 @@ let handleMemberLeft = async (MemberId) => {
 let removeMemberFromDOM = async (MemberId) => {
   //get the specific id from the DOM
   let memberWrapper = document.getElementById(`member__${MemberId}__wrapper`);
+  let name = memberWrapper.getElementsByClassName("member_name")[0].textContent;
+  addBotMessageToDOM(`${name} has left.`);
   memberWrapper.remove();
 };
 
@@ -85,6 +90,28 @@ let addMessageToDOM = async (name, message) => {
                         <div class="message__body">
                             <strong class="message__author">${name}</strong>
                             <p class="message__text">${message}</p>
+                        </div>
+                    </div>`;
+
+  messageWrapper.insertAdjacentHTML("beforeend", newMessage);
+
+  let lastMessage = document.querySelector(
+    "#messages .message__wrapper:last-child"
+  );
+  //check
+  if (lastMessage) {
+    lastMessage.scrollIntoView();
+  }
+};
+
+//add both that notify when new users joined the channel
+let addBotMessageToDOM = async (botMessage) => {
+  let messageWrapper = document.getElementById("messages");
+
+  let newMessage = `<div class="message__wrapper">
+                        <div class="message__body__bot">
+                            <strong class="message__author__bot">🤖 Maco Bot</strong>
+                            <p class="message__text__bot">${botMessage}</p>
                         </div>
                     </div>`;
 

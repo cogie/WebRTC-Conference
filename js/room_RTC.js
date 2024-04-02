@@ -61,6 +61,7 @@ let joinRoom = async () => {
 
   //call from RTM to display users ID to DOM realtime
   getMembers();
+  addBotMessageToDOM(`Welcome Aboard ${displayName}! 👋`);
 
   //set up the client using agora SDk RTC = real time communication
   client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); //live or rtc i mode
