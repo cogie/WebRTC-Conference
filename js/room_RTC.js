@@ -159,7 +159,10 @@ let switchToCamera = async () => {
 //deletes the frame of user if it leaves the call
 let handleUserLeft = async (user) => {
   delete remoteUsers[user.uid];
-  document.getElementById(`user-container-${user.uid}`).remove();
+  let item = document.getElementById(`user-container-${user.uid}`);
+  if (item) {
+    item.remove();
+  }
 
   if (userIdInDisplayFrame === `user-container-${user.uid}`) {
     displayFrame.style.display = null;
